@@ -19,5 +19,6 @@
 <img width="604" height="621" alt="image" src="https://github.com/user-attachments/assets/1baa30b1-482a-45e3-93c8-327210a95a66" />
 
 # 물리 모델링
-<img width="888" height="654" alt="image" src="https://github.com/user-attachments/assets/b275fc40-921b-40c0-a76d-9cf6cd0ceaa8" />
+<img width="890" height="655" alt="image" src="https://github.com/user-attachments/assets/bd8c8c30-779a-4e24-afd4-796dc8d9b040" />
+
 
