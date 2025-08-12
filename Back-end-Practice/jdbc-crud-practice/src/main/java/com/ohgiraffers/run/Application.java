@@ -21,9 +21,9 @@ public class Application {
 
         while (true){
             System.out.println("1. 전체 상품 조회");
-            System.out.println("2. 마지막 상품 코드 조회");
+            System.out.println("2. 펫 종류별 상품 조회");
             System.out.println("3. 신규 상품 등록");
-            System.out.println("4. 입고 상품 등록");
+            System.out.println("4. 입고 상품 수량 등록");
             System.out.println("5. 상품 수량 변경");
             System.out.println("6. 상품 삭제");
             System.out.println("9. 프로그램 종료");
@@ -39,13 +39,47 @@ public class Application {
             switch (num) {
                 case 1 :
                     /* 전체 상품 조회 */
-                    List<Map<Integer, String>> productList = registDAO.selectAllProduct(con);
-                    for(Map<Integer, String> product : productList) {
-                        System.out.println("product = " + product);
-                    } break;
+                    List<Map<String, Object>> productList = registDAO.selectAllProduct(con);
+                    for (Map<String, Object> product : productList) {
+                        System.out.println("상품코드: " + product.get("PRODUCT_CODE")
+                                + ", 상품명: " + product.get("PRODUCT_NAME")
+                                + ", 가격: " + product.get("PRICE")
+                                + ", 수량: " + product.get("EA"));
+                    }
+                    break;
+                case 2:
+                    System.out.println("조회할 펫 종류를 선택하세요.");
+                    System.out.println("1. 강아지");
+                    System.out.println("2. 고양이");
+                    System.out.print("번호 입력 : ");
+                    int petNum = sc.nextInt();
+                    sc.nextLine();  // 개행 처리
 
-                case 2 :         /*  상품의 마지막 번호 조회 */
-                    System.out.println("maxProductCode = " + maxProductCode); break;
+                    String petType = null;
+                    switch (petNum) {
+                        case 1: petType = "강아지"; break;
+                        case 2: petType = "고양이"; break;
+                        default:
+                            System.out.println("잘못된 입력입니다.");
+                            break;
+                    }
+
+                    if(petType != null) {
+                        List<Map<String, Object>> petProductList = registDAO.selectProductByPetType(con, petType);
+
+                        if(petProductList.isEmpty()) {
+                            System.out.println("해당 펫 종류에 등록된 상품이 없습니다.");
+                        } else {
+                            for (Map<String, Object> product : petProductList) {
+                                System.out.println("상품코드: " + product.get("PRODUCT_CODE")
+                                        + ", 상품명: " + product.get("PRODUCT_NAME")
+                                        + ", 가격: " + product.get("PRICE")
+                                        + ", 수량: " + product.get("EA"));
+                            }
+                        }
+                    }
+                    break;
+
                 case 3 :
                     /* 신규 상품 등록 */
                     System.out.print("등록할 상품의 카테고리를 입력해주세요(강아지음식,고양이음식,강아지용품,고양이용품): ");
@@ -103,10 +137,10 @@ public class Application {
                     } break;
                 case 5 :
                     /* 수량 업데이트 ========================================================= */
-                    System.out.print("입고된 상품 코드를 입력하세요 : ");
+                    System.out.print("변경할 상품 코드를 입력하세요 : ");
                     int upCode = sc.nextInt();
 
-                    System.out.print("입고된 수량을 입력하세요 : ");
+                    System.out.print("변경할 수량을 입력하세요 : ");
                     int upEA = sc.nextInt();
 
                     int result2 = registDAO.updateProductEA(con, upCode, upEA);

@@ -24,10 +24,9 @@
         , ?
         )
     </entry>
-    <entry key="selectAllProductList">
-        SELECT A.Product_CODE
-        , A.Product_NAME
-        FROM Product A
+    <entry key="selectAllProduct">
+        SELECT PRODUCT_CODE, PRODUCT_NAME, PRICE, EA
+        FROM PRODUCT
     </entry>
     <entry key="deleteProductCode">
         DELETE FROM PRODUCT
@@ -56,5 +55,18 @@
         ?,
         ?
         )
+    </entry>
+
+    <entry key="selectProductByPetType">
+    SELECT P.PRODUCT_CODE, P.PRODUCT_NAME, P.PRICE, P.EA
+    FROM PRODUCT P
+    JOIN CATEGORY C ON P.CATEGORY_CODE = C.CATEGORY_CODE
+    JOIN PET ON C.PET_CODE = PET.PET_CODE
+    WHERE PET.TYPES_OF_PETS = ?
+    ORDER BY P.PRODUCT_CODE
+    </entry>
+
+    <entry key="increaseProductEA">
+        UPDATE PRODUCT SET EA = EA + ? WHERE PRODUCT_CODE = ?
     </entry>
 </properties>

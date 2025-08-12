@@ -38,6 +38,16 @@ public class StockDAO {
             pstmt.setInt(4,stockIn.getStEA());
 
             result3 = pstmt.executeUpdate();
+
+            if(result3 > 0) {
+
+                ProductDAO productDAO = new ProductDAO();
+                int updateResult = productDAO.increaseProductEA(con, stockIn.getProCode(), stockIn.getStEA());
+
+                if(updateResult <= 0) {
+                    throw new SQLException("상품 수량 업데이트 실패");
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }finally {

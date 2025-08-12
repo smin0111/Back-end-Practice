@@ -75,38 +75,38 @@ public class ProductDAO {
     }
 /* 전체 상품 목록 검색 ======================================================================== */
 
-    public List<Map<Integer, String>> selectAllProduct(Connection con) {
-
-        Statement stmt = null;
+    public List<Map<String, Object>> selectAllProduct(Connection con) {
+        PreparedStatement pstmt = null;
         ResultSet rset = null;
+        List<Map<String, Object>> productList = new ArrayList<>();
 
-        List<Map<Integer, String>> productList = null;
-
-        String query = prop.getProperty("selectAllProductList");
+        String query = prop.getProperty("selectAllProduct");
 
         try {
-            stmt = con.createStatement();
-            rset = stmt.executeQuery(query);
-
-            productList = new ArrayList<>();
+            pstmt = con.prepareStatement(query);
+            rset = pstmt.executeQuery();
 
             while (rset.next()) {
-                Map<Integer, String> product = new HashMap<>();
-                product.put(rset.getInt("Product_CODE"), rset.getString("Product_NAME"));
+                Map<String, Object> product = new HashMap<>();
+                product.put("PRODUCT_CODE", rset.getInt("PRODUCT_CODE"));
+                product.put("PRODUCT_NAME", rset.getString("PRODUCT_NAME"));
+                product.put("PRICE", rset.getInt("PRICE"));
+                product.put("EA", rset.getInt("EA"));
 
                 productList.add(product);
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } finally {
             close(rset);
-            close(stmt);
+            close(pstmt);
         }
 
         return productList;
     }
 
+    /* 상품삭제 ====================================================================*/
     public int deleteProductCode(Connection con, int proCode) {
 
         PreparedStatement pstmt = null;
@@ -126,7 +126,7 @@ public class ProductDAO {
 
         return result1;
     }
-
+    /* 수량 변경 =============================================================*/
     public int updateProductEA(Connection con, int upCode, int upEA) {
         PreparedStatement pstmt = null;
         int result2 = 0;
@@ -135,8 +135,8 @@ public class ProductDAO {
 
         try {
             pstmt = con.prepareStatement(query);
-            pstmt.setInt(1, upEA);     // 첫 번째 ? → 변경할 수량
-            pstmt.setInt(2, upCode);   // 두 번째 ? → 해당 제품 코드
+            pstmt.setInt(1, upEA);
+            pstmt.setInt(2, upCode);
             result2 = pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -146,7 +146,59 @@ public class ProductDAO {
 
         return result2;
     }
+    /* 펫 종류별 조회 ========================================================================== */
+    public List<Map<String, Object>> selectProductByPetType(Connection con, String petType) {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<Map<String, Object>> productList = new ArrayList<>();
 
+        String query = prop.getProperty("selectProductByPetType");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, petType);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> product = new HashMap<>();
+                product.put("PRODUCT_CODE", rs.getInt("PRODUCT_CODE"));
+                product.put("PRODUCT_NAME", rs.getString("PRODUCT_NAME"));
+                product.put("PRICE", rs.getInt("PRICE"));
+                product.put("EA", rs.getInt("EA"));
+                productList.add(product);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            close(rs);
+            close(pstmt);
+        }
+
+        return productList;
+    }
+
+    /* 입고로인한 수량 변경===========================================================*/
+    public int increaseProductEA(Connection con, int productCode, int addAmount) {
+        PreparedStatement pstmt = null;
+        int result = 0;
+
+        String query = prop.getProperty("increaseProductEA");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, addAmount);
+            pstmt.setInt(2, productCode);
+
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            close(pstmt);
+        }
+
+        return result;
+    }
 
 
 }
