@@ -24,7 +24,7 @@ public class Application {
             System.out.println("2. 펫 종류별 상품 조회");
             System.out.println("3. 신규 상품 등록");
             System.out.println("4. 입고 상품 수량 등록");
-            System.out.println("5. 상품 수량 변경");
+            System.out.println("5. 상품 변경");
             System.out.println("6. 상품 삭제");
             System.out.println("9. 프로그램 종료");
             System.out.print("메뉴를 선택해주세요 : ");
@@ -53,32 +53,61 @@ public class Application {
                     System.out.println("2. 고양이");
                     System.out.print("번호 입력 : ");
                     int petNum = sc.nextInt();
-                    sc.nextLine();  // 개행 처리
+                    sc.nextLine();
 
-                    String petType = null;
-                    switch (petNum) {
-                        case 1: petType = "강아지"; break;
-                        case 2: petType = "고양이"; break;
+                    String petType = "";
+                    if (petNum == 1) {
+                        petType = "강아지";
+                    } else if (petNum == 2) {
+                        petType = "고양이";
+                    } else {
+                        System.out.println("잘못된 입력입니다.");
+                        break;
+                    }
+
+                    System.out.println("조회할 카테고리를 선택하세요.");
+                    System.out.println("1. " + petType + "전체 상품");
+                    System.out.println("2. " + petType + "음식");
+                    System.out.println("3. " + petType + "용품");
+                    System.out.print("번호 입력 : ");
+                    int cateNum = sc.nextInt();
+                    sc.nextLine();
+
+                    List<Map<String, Object>> productList1 = null;
+
+                    switch (cateNum) {
+                        case 1:
+                            // 전체 상품
+                            productList1 = registDAO.selectProductByPetType(con, petType);
+                            break;
+                        case 2:
+                            // 음식 카테고리
+                            productList1 = registDAO.selectProductByPetTypeAndCategory(con, petType, petType + "음식");
+                            break;
+                        case 3:
+                            // 용품 카테고리
+                            productList1 = registDAO.selectProductByPetTypeAndCategory(con, petType, petType + "용품");
+                            break;
+
                         default:
                             System.out.println("잘못된 입력입니다.");
                             break;
                     }
 
-                    if(petType != null) {
-                        List<Map<String, Object>> petProductList = registDAO.selectProductByPetType(con, petType);
-
-                        if(petProductList.isEmpty()) {
-                            System.out.println("해당 펫 종류에 등록된 상품이 없습니다.");
-                        } else {
-                            for (Map<String, Object> product : petProductList) {
-                                System.out.println("상품코드: " + product.get("PRODUCT_CODE")
-                                        + ", 상품명: " + product.get("PRODUCT_NAME")
-                                        + ", 가격: " + product.get("PRICE")
-                                        + ", 수량: " + product.get("EA"));
-                            }
+                    if (productList1 == null || productList1.isEmpty()) {
+                        System.out.println("조회된 상품이 없습니다.");
+                    } else {
+                        for (Map<String, Object> product : productList1) {
+                            System.out.println("------------------------");
+                            System.out.println("상품코드 : " + product.get("PRODUCT_CODE"));
+                            System.out.println("상품명 : " + product.get("PRODUCT_NAME"));
+                            System.out.println("가격 : " + product.get("PRICE") + "원");
+                            System.out.println("재고 : " + product.get("EA") + "개");
+                            System.out.println("------------------------");
                         }
                     }
                     break;
+
 
                 case 3 :
                     /* 신규 상품 등록 */
@@ -136,20 +165,66 @@ public class Application {
                         System.out.println("입고내역 등록 실패!");
                     } break;
                 case 5 :
-                    /* 수량 업데이트 ========================================================= */
-                    System.out.print("변경할 상품 코드를 입력하세요 : ");
-                    int upCode = sc.nextInt();
+                    /* 상품 변경 서브메뉴 ========================================================= */
+                    System.out.println("상품 변경 메뉴입니다. 변경할 항목을 선택하세요.");
+                    System.out.println("1. 상품 이름 변경");
+                    System.out.println("2. 상품 가격 변경");
+                    System.out.println("3. 상품 수량 (추가/감소)");
+                    System.out.print("번호 입력 : ");
+                    int changeNum = sc.nextInt();
+                    sc.nextLine();
 
-                    System.out.print("변경할 수량을 입력하세요 : ");
-                    int upEA = sc.nextInt();
+                    System.out.print("변경할 상품 코드를 입력해주세요 : ");
+                    int changeProCode = sc.nextInt();
+                    sc.nextLine();
 
-                    int result2 = registDAO.updateProductEA(con, upCode, upEA);
+                    int changeResult = 0;
 
-                    if (result2 > 0) {
-                        System.out.println("상품 수량 업데이트 성공!");
-                    } else {
-                        System.out.println("상품 수량 업데이트 실패!");
-                    } break;
+                    switch (changeNum) {
+                        case 1:
+                            // 상품 이름 변경
+                            System.out.print("새로운 상품 이름을 입력해주세요 : ");
+                            String newName = sc.nextLine();
+                            changeResult = registDAO.updateProductName(con, changeProCode, newName);
+                            if (changeResult > 0) {
+                                System.out.println("상품 이름 변경 성공!");
+                            } else {
+                                System.out.println("상품 이름 변경 실패!");
+                            }
+                            break;
+
+                        case 2:
+                            // 상품 가격 변경
+                            System.out.print("새로운 가격을 입력해주세요 : ");
+                            int newPrice = sc.nextInt();
+                            sc.nextLine();
+                            changeResult = registDAO.updateProductPrice(con, changeProCode, newPrice);
+                            if (changeResult > 0) {
+                                System.out.println("상품 가격 변경 성공!");
+                            } else {
+                                System.out.println("상품 가격 변경 실패!");
+                            }
+                            break;
+
+                        case 3:
+                            // 상품 수량 변경 (현재 DAO는 EA = EA + ? 형태)
+                            System.out.print("추가 수량을 입력해주세요 : ");
+                            int deltaEA = sc.nextInt();
+                            sc.nextLine();
+                            changeResult = registDAO.updateProductEA(con, changeProCode, deltaEA);
+                            if (changeResult > 0) {
+                                System.out.println("상품 수량 변경 성공!");
+                            } else {
+                                System.out.println("상품 수량 변경 실패!");
+                            }
+                            break;
+
+                        default:
+                            System.out.println("잘못된 입력입니다.");
+                            break;
+                    }
+                    break;
+
                 case 6 :
                     /* 상품 삭제 ========================================================= */
                     System.out.print("삭제할 상품 코드를 입력해주세요 : ");

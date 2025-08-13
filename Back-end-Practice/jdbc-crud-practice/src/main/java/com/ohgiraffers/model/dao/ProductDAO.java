@@ -200,6 +200,80 @@ public class ProductDAO {
         return result;
     }
 
+    // 펫 종류 + 카테고리별 상품 조회
+    public List<Map<String, Object>> selectProductByPetTypeAndCategory(Connection con, String petType, String categoryName) {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<Map<String, Object>> productList = new ArrayList<>();
+
+        String query = prop.getProperty("selectProductByPetTypeAndCategoryName");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, petType);
+            pstmt.setString(2, categoryName);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> product = new HashMap<>();
+                product.put("PRODUCT_CODE", rs.getInt("PRODUCT_CODE"));
+                product.put("PRODUCT_NAME", rs.getString("PRODUCT_NAME"));
+                product.put("PRICE", rs.getInt("PRICE"));
+                product.put("EA", rs.getInt("EA"));
+                productList.add(product);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            close(rs);
+            close(pstmt);
+        }
+
+        return productList;
+    }
+
+    /* 상품명 변경 ==================================================================== */
+    public int updateProductName(Connection con, int productCode, String newName) {
+        PreparedStatement pstmt = null;
+        int result = 0;
+
+        String query = prop.getProperty("updateProductName");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, newName);
+            pstmt.setInt(2, productCode);
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            close(pstmt);
+        }
+
+        return result;
+    }
+
+    /* 상품 가격 변경 ==================================================================== */
+    public int updateProductPrice(Connection con, int productCode, int newPrice) {
+        PreparedStatement pstmt = null;
+        int result = 0;
+
+        String query = prop.getProperty("updateProductPrice");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, newPrice);
+            pstmt.setInt(2, productCode);
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            close(pstmt);
+        }
+
+        return result;
+    }
+
 
 }
 

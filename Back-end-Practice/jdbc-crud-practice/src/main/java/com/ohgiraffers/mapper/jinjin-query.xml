@@ -57,16 +57,40 @@
         )
     </entry>
 
-    <entry key="selectProductByPetType">
-    SELECT P.PRODUCT_CODE, P.PRODUCT_NAME, P.PRICE, P.EA
-    FROM PRODUCT P
-    JOIN CATEGORY C ON P.CATEGORY_CODE = C.CATEGORY_CODE
-    JOIN PET ON C.PET_CODE = PET.PET_CODE
-    WHERE PET.TYPES_OF_PETS = ?
-    ORDER BY P.PRODUCT_CODE
-    </entry>
+
 
     <entry key="increaseProductEA">
         UPDATE PRODUCT SET EA = EA + ? WHERE PRODUCT_CODE = ?
+    </entry>
+
+        <!-- 강아지/고양이 전체 상품 조회 -->
+    <entry key="selectProductByPetType">
+        SELECT P.PRODUCT_CODE, P.PRODUCT_NAME, P.PRICE, P.EA
+        FROM PRODUCT P
+        JOIN CATEGORY C ON P.CATEGORY_CODE = C.CATEGORY_CODE
+        JOIN PET ON C.PET_CODE = PET.PET_CODE
+        WHERE PET.TYPES_OF_PETS = ?
+        ORDER BY P.PRODUCT_CODE
+    </entry>
+        <!-- 강아지/고양이 음식 or 용품 카테고리별 상품 조회 -->
+    <entry key="selectProductByPetTypeAndCategoryName">
+        SELECT P.PRODUCT_CODE, P.PRODUCT_NAME, P.PRICE, P.EA
+        FROM PRODUCT P
+        JOIN CATEGORY C ON P.CATEGORY_CODE = C.CATEGORY_CODE
+        JOIN PET ON C.PET_CODE = PET.PET_CODE
+        WHERE PET.TYPES_OF_PETS = ? AND C.CATEGORY_NAME = ?
+        ORDER BY P.PRODUCT_CODE
+    </entry>
+
+    <entry key="updateProductName">
+        UPDATE PRODUCT
+        SET PRODUCT_NAME = ?
+        WHERE PRODUCT_CODE = ?
+    </entry>
+
+    <entry key="updateProductPrice">
+        UPDATE PRODUCT
+        SET PRICE = ?
+        WHERE PRODUCT_CODE = ?
     </entry>
 </properties>
