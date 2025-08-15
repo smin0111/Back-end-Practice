@@ -229,14 +229,40 @@ public class Application {
                     /* 상품 삭제 ========================================================= */
                     System.out.print("삭제할 상품 코드를 입력해주세요 : ");
                     int dpCode = sc.nextInt();
+                    sc.nextLine(); // 버퍼 비우기
 
-                    int result1 = registDAO.deleteProductCode(con, dpCode);
+                    // 삭제 전 상품 정보 조회
+                    Map<String, Object> deleteTarget = registDAO.selectProductByCode(con, dpCode);
 
-                    if(result1 > 0) {
-                        System.out.println("상품 삭제 성공!");
+                    if (deleteTarget == null) {
+                        System.out.println("해당 상품 코드의 상품이 존재하지 않습니다.");
+                        break;
+                    }
+
+                    // 상품 정보 출력
+                    System.out.println("===== 삭제할 상품 정보 =====");
+                    System.out.println("상품코드 : " + deleteTarget.get("PRODUCT_CODE"));
+                    System.out.println("상품명 : " + deleteTarget.get("PRODUCT_NAME"));
+                    System.out.println("가격 : " + deleteTarget.get("PRICE") + "원");
+                    System.out.println("재고 : " + deleteTarget.get("EA") + "개");
+                    System.out.println("===========================");
+
+                    // 삭제 여부 확인
+                    System.out.print("정말 삭제하시겠습니까? (Y/N) : ");
+                    String confirm = sc.nextLine().trim().toUpperCase();
+
+                    if (confirm.equals("Y")) {
+                        int result1 = registDAO.deleteProductCode(con, dpCode);
+                        if(result1 > 0) {
+                            System.out.println("상품 삭제 성공!");
+                        } else {
+                            System.out.println("상품 삭제 실패!");
+                        }
                     } else {
-                        System.out.println("상품 삭제 실패!");
-                    } break;
+                        System.out.println("상품 삭제가 취소되었습니다.");
+                    }
+                    break;
+
                 case 9 :
                     System.out.println("프로그램이 종료되었습습니다."); return;
                 default:

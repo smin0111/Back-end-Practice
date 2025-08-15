@@ -273,6 +273,26 @@ public class ProductDAO {
 
         return result;
     }
+  // ========================= 코드로 인한 상품 검색 ==============================
+    public Map<String, Object> selectProductByCode(Connection con, int productCode) {
+        Map<String, Object> product = null;
+        String query = "SELECT PRODUCT_CODE, PRODUCT_NAME, PRICE, EA FROM PRODUCT WHERE PRODUCT_CODE = ?";
+        try (PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, productCode);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    product = new HashMap<>();
+                    product.put("PRODUCT_CODE", rs.getInt("PRODUCT_CODE"));
+                    product.put("PRODUCT_NAME", rs.getString("PRODUCT_NAME"));
+                    product.put("PRICE", rs.getInt("PRICE"));
+                    product.put("EA", rs.getInt("EA"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return product;
+    }
 
 
 }
