@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
+    <!-- 마지막 상품 코드 검색 -->
     <entry key="selectLastProductCode">
         SELECT MAX(A.PRODUCT_CODE)
           FROM PRODUCT A
     </entry>
-
+    <!-- 상품 등록 -->
     <entry key="insertProduct">
         INSERT INTO Product
         (
@@ -24,22 +25,23 @@
         , ?
         )
     </entry>
+    <!-- 상품 전체 조회 -->
     <entry key="selectAllProduct">
         SELECT PRODUCT_CODE, PRODUCT_NAME, PRICE, EA
         FROM PRODUCT
     </entry>
+    <!-- 상품 코드로 상품 삭제 -->
     <entry key="deleteProductCode">
         DELETE FROM PRODUCT
          WHERE PRODUCT_CODE = ?
     </entry>
-
+    <!-- 보유 상품 수량 +- 변경 -->
     <entry key="updateProductEA">
         UPDATE PRODUCT
         SET EA = EA + ?
         WHERE PRODUCT_CODE = ?
     </entry>
-
-
+    <!-- 입고 내역 추가 -->
     <entry key="insertStock">
         INSERT INTO STOCK
         (
@@ -56,9 +58,7 @@
         ?
         )
     </entry>
-
-
-
+    <!-- 입고 상품 수량 추가 시 // 상품 수량 = 보유상품 + 입고 상품 갯수  -->
     <entry key="increaseProductEA">
         UPDATE PRODUCT SET EA = EA + ? WHERE PRODUCT_CODE = ?
     </entry>
@@ -81,13 +81,13 @@
         WHERE PET.TYPES_OF_PETS = ? AND C.CATEGORY_NAME = ?
         ORDER BY P.PRODUCT_CODE
     </entry>
-
+    <!-- 상품 이름 변경 -->
     <entry key="updateProductName">
         UPDATE PRODUCT
         SET PRODUCT_NAME = ?
         WHERE PRODUCT_CODE = ?
     </entry>
-
+    <!-- 상품 가격 변경 -->
     <entry key="updateProductPrice">
         UPDATE PRODUCT
         SET PRICE = ?

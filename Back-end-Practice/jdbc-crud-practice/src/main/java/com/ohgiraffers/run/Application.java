@@ -19,7 +19,9 @@ public class Application {
         StockDAO registDAO1 = new StockDAO();
         Scanner sc = new Scanner(System.in);
 
+        // 프로그램 실행 ==================================================
         while (true){
+            System.out.println("=====================================");
             System.out.println("1. 전체 상품 조회");
             System.out.println("2. 펫 종류별 상품 조회");
             System.out.println("3. 신규 상품 등록");
@@ -28,11 +30,10 @@ public class Application {
             System.out.println("6. 상품 삭제");
             System.out.println("9. 프로그램 종료");
             System.out.print("메뉴를 선택해주세요 : ");
-
             int num = sc.nextInt();
             sc.nextLine();
 
-            int maxProductCode = registDAO.selectLastProductCode(con);
+            int maxProductCode = registDAO.selectLastProductCode(con); // 마지막 상품 코드 검색
             int proCode = maxProductCode + 1;
 
 
@@ -140,6 +141,16 @@ public class Application {
                     }  break;
                 case 4 :
                     /* 입고 */
+                    // 전체 리스트 출력==========================================
+                    List<Map<String, Object>> productListAll = registDAO.selectAllProduct(con);
+                    for (Map<String, Object> product : productListAll) {
+                        System.out.println("상품코드: " + product.get("PRODUCT_CODE")
+                                + ", 상품명: " + product.get("PRODUCT_NAME")
+                                + ", 가격: " + product.get("PRICE")
+                                + ", 수량: " + product.get("EA"));
+                    }
+                    // 전체 리스트 출력 종료 ==========================================
+
                     System.out.print("입고된 상품의 발주처를 입력해주세요(K브랜드, J브랜드)  : ");
                     String suppl = sc.nextLine();
                     System.out.print("입고된 상품코드를 입력해주세요 : ");
@@ -164,8 +175,18 @@ public class Application {
                     } else {
                         System.out.println("입고내역 등록 실패!");
                     } break;
+
                 case 5 :
                     /* 상품 변경 서브메뉴 ========================================================= */
+                    // 전체 리스트 출력 ========================================================
+                    List<Map<String, Object>> productListAll1 = registDAO.selectAllProduct(con);
+                    for (Map<String, Object> product : productListAll1) {
+                        System.out.println("상품코드: " + product.get("PRODUCT_CODE")
+                                + ", 상품명: " + product.get("PRODUCT_NAME")
+                                + ", 가격: " + product.get("PRICE")
+                                + ", 수량: " + product.get("EA"));
+                    }
+
                     System.out.println("상품 변경 메뉴입니다. 변경할 항목을 선택하세요.");
                     System.out.println("1. 상품 이름 변경");
                     System.out.println("2. 상품 가격 변경");
@@ -227,6 +248,15 @@ public class Application {
 
                 case 6 :
                     /* 상품 삭제 ========================================================= */
+                    // 전체 리스트 출력 ========================================================
+                    List<Map<String, Object>> productListAll2 = registDAO.selectAllProduct(con);
+                    for (Map<String, Object> product : productListAll2) {
+                        System.out.println("상품코드: " + product.get("PRODUCT_CODE")
+                                + ", 상품명: " + product.get("PRODUCT_NAME")
+                                + ", 가격: " + product.get("PRICE")
+                                + ", 수량: " + product.get("EA"));
+                    }
+                    // 삭제할 상품 코드 입력
                     System.out.print("삭제할 상품 코드를 입력해주세요 : ");
                     int dpCode = sc.nextInt();
                     sc.nextLine(); // 버퍼 비우기
